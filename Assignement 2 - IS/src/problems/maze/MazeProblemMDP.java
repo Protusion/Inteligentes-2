@@ -70,10 +70,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
      */
     @Override
     public boolean isFinal(State state) {
-        if (((MazeState) state).position.equals(maze.posCheese)) {
-            return true;
-        }
-        return false; // Quitar
+        return ((MazeState) state).position.equals(maze.posCheese); 
     }
 
     /**
@@ -126,7 +123,6 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         } else if (maze.posCheese.equals(mazeState.position)) {
             return 100;
         }
-        // Otherwise returns 0
         return 0;
     }
 
