@@ -69,7 +69,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
      */
     @Override
     public boolean isFinal(State state) {
-
+        
         return false; // Quitar
     }
 
@@ -87,18 +87,24 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
                 if (maze.cells[x - 1][y] != 1) {
                     possibleActions.add(MazeAction.LEFT);
                 }
-            } else if (x + 1 <= maze.size - 1) {
+            }
+            if (x + 1 <= maze.size - 1) {
                 if (maze.cells[x + 1][y] != 1) {
                     possibleActions.add(MazeAction.RIGHT);
                 }
-            } else if (y - 1 >= 0) {
+            }
+            if (y - 1 >= 0) {
                 if (maze.cells[x][y - 1] != 1) {
                     possibleActions.add(MazeAction.UP);
                 }
-            } else if (y+1 <= maze.size - 1){
-                if(maze.cells[x][y+1] != 1){
+            }
+            if (y + 1 <= maze.size - 1) {
+                if (maze.cells[x][y + 1] != 1) {
                     possibleActions.add(MazeAction.DOWN);
                 }
+            }
+            if(maze.cells[x][y] == 2){
+                possibleActions.add(MazeAction.DIVE);
             }
         }
 
@@ -111,11 +117,12 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
      */
     @Override
     public double getReward(State state) {
-        double reward = 0;
-
-        //
-        // COMPLETAR
-        // 
+        MazeState mazeState = (MazeState)state;
+        if(maze.posCats.contains(mazeState.position)){
+            return -100;
+        } else if (maze.posCheese.equals(mazeState.position)){
+            return 100;
+        }
         // Otherwise returns 0
         return 0;
     }
@@ -127,10 +134,8 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
     public double getTransitionReward(State fromState, Action action, State toState) {
 
         double reward = 0;
-
-        //
-        // COMPLETAR
-        // 
+        
+        
         // Returns the reward
         return reward;
     }
@@ -159,8 +164,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
     }
 
     /**
-     * Generates the transition model for a certain state in this particular
-     * problem. Assumes that the action can be applied. This method is PRIVATE.
+     * Generates the transition model for a certain state in this particular problem. Assumes that the action can be applied. This method is PRIVATE.
      */
     private StateActionTransModel mazeTransitionModel(State state, Action action) {
         // Structures contained by the transition model.
