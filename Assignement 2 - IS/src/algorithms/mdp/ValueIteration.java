@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import learning.*;
+import problems.maze.*;
 
 /** 
  * Implements the value iteration algorithm for Markov Decision Processes 
@@ -27,13 +28,10 @@ public class ValueIteration extends LearningAlgorithm {
 			System.out.println("The algorithm ValueIteration can not be applied to this problem (model is not visible).");
 			System.exit(0);
 		}
-		
-		 //****************************/
-		 //
-		 // TO DO
-		 // 
-		 // 
-		 //***************************/
+                
+                for(State states : ((MazeProblemMDP)this.problem).getAllStates()){
+                    utilities.put(states, (double)0);
+                }
 	}
 	
 	

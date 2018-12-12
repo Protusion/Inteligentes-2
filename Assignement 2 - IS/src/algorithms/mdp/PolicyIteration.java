@@ -47,12 +47,7 @@ public class PolicyIteration extends LearningAlgorithm {
 		// Initializes utilities. In case of terminal states, the utility corresponds to
 		// the reward. In the remaining (most) states, utilities are zero.		
 		HashMap<State,Double> utilities = new HashMap<State,Double>();
-		 //****************************/
-		 //
-		 // TO DO
-		 // 
-		 // 
-		 //***************************/
+		
 		return utilities;
 	}
 

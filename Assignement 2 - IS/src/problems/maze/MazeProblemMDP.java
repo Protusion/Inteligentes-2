@@ -135,7 +135,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         Position PfromState = ((MazeState) fromState).position;
         Position PtoState = ((MazeState) toState).position;
         if (action.equals(MazeAction.DIVE)) {
-            reward += sqrt((PtoState.x - PfromState.x) ^ 2 + (PtoState.y - PfromState.y) ^ 2) * 0.5;
+            reward += Math.sqrt(Math.pow(PtoState.x - PfromState.x,2) + Math.pow(PtoState.y - PfromState.y ,2)) * 0.5;
         } else {
             if (maze.cells[PfromState.x][PfromState.y] == 3) {
                 reward += 2;
