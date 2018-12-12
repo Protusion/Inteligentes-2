@@ -46,12 +46,33 @@ public class QLearning extends LearningAlgorithm{
 			
 			// Iterates until it finds a final state.
 			 
-			 //****************************/
-			 //
-			 // TO DO
-			 // 
-			 // 
-			 //***************************/				
+                        while(!problem.isFinal(currentState)){
+                            
+                            selAction = qTable.getActionMaxValue(currentState);
+                            if(selAction == null){
+                                selAction = problem.randomAction(currentState);
+                            }
+                            
+                            newState = problem.applyAction(currentState, selAction);
+                            
+                            reward = problem.getReward(newState);
+                            
+                            Q = qTable.getQValue(currentState, selAction);
+                            
+                            if(problem.isFinal(newState)){
+                                Q = ((1 - alpha) * Q) + (alpha * reward);
+                            }else{
+                                maxQ = qTable.getMaxQValue(newState);
+                                
+                                reward += problem.getTransitionReward(currentState, selAction, newState);
+                                
+                                Q = ((1 - alpha) * Q) + (alpha * (reward + problem.gamma * maxQ));
+                            }
+                            
+                            qTable.setQValue(currentState, selAction,Q);
+                            
+                            currentState = newState;
+                        }
 		}
 		solution = qTable.generatePolicy();
 	}

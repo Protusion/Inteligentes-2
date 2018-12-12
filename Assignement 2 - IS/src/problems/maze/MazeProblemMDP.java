@@ -70,7 +70,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
      */
     @Override
     public boolean isFinal(State state) {
-        return ((MazeState) state).position.equals(maze.posCheese); 
+        return ((MazeState) state).position.equals(maze.posCheese) || maze.posCats.contains(((MazeState) state).position);
     }
 
     /**
@@ -134,14 +134,13 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         double reward = 0;
         Position PfromState = ((MazeState) fromState).position;
         Position PtoState = ((MazeState) toState).position;
+
+        reward += Math.sqrt(Math.pow(PtoState.x - PfromState.x, 2) + Math.pow(PtoState.y - PfromState.y, 2));
+
         if (action.equals(MazeAction.DIVE)) {
-            reward += Math.sqrt(Math.pow(PtoState.x - PfromState.x,2) + Math.pow(PtoState.y - PfromState.y ,2)) * 0.5;
-        } else {
-            if (maze.cells[PfromState.x][PfromState.y] == 3) {
-                reward += 2;
-            } else {
-                reward += 1;
-            }
+            reward = reward * 0.5;
+        } else if (maze.cells[PfromState.x][PfromState.y] == 3) {
+            reward = reward * 2;
         }
 
         // Returns the reward
@@ -157,7 +156,9 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         ArrayList<State> allStates = new ArrayList<State>();
         for (int i = 0; i < maze.size; i++) {
             for (int j = 0; j < maze.size; j++) {
-                allStates.add(new MazeState(i, j));
+                if (maze.cells[i][j] != 1) {
+                    allStates.add(new MazeState(i, j));
+                }
             }
         }
         return allStates;
@@ -171,8 +172,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
     }
 
     /**
-     * Generates the transition model for a certain state in this particular
-     * problem. Assumes that the action can be applied. This method is PRIVATE.
+     * Generates the transition model for a certain state in this particular problem. Assumes that the action can be applied. This method is PRIVATE.
      */
     private StateActionTransModel mazeTransitionModel(State state, Action action) {
         // Structures contained by the transition model.

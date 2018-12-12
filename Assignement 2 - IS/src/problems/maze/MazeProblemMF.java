@@ -70,7 +70,7 @@ public class MazeProblemMF extends MFLearningProblem implements MazeProblem, Pro
      */
     @Override
     public boolean isFinal(State state) {
-        return ((MazeState) state).position.equals(maze.posCheese);
+        return ((MazeState) state).position.equals(maze.posCheese) || maze.posCats.contains(((MazeState) state).position);
     }
 
     /**
@@ -113,14 +113,13 @@ public class MazeProblemMF extends MFLearningProblem implements MazeProblem, Pro
         double reward = 0;
         Position PfromState = ((MazeState) fromState).position;
         Position PtoState = ((MazeState) toState).position;
+
+        reward += Math.sqrt(Math.pow(PtoState.x - PfromState.x, 2) + Math.pow(PtoState.y - PfromState.y, 2));
+
         if (action.equals(MazeAction.DIVE)) {
-            reward += Math.sqrt(Math.pow(PtoState.x - PfromState.x, 2) + Math.pow(PtoState.y - PfromState.y, 2)) * 0.5;
-        } else {
-            if (maze.cells[PfromState.x][PfromState.y] == 3) {
-                reward += 2;
-            } else {
-                reward += 1;
-            }
+            reward = reward * 0.5;
+        } else if (maze.cells[PfromState.x][PfromState.y] == 3) {
+            reward = reward * 2;
         }
 
         // Returns the reward
@@ -129,8 +128,7 @@ public class MazeProblemMF extends MFLearningProblem implements MazeProblem, Pro
 
     // From MFLearningProblem
     /**
-     * Generates the transition model for a certain state in this particular
-     * problem. Assumes that the action can be applied. This method is PRIVATE.
+     * Generates the transition model for a certain state in this particular problem. Assumes that the action can be applied. This method is PRIVATE.
      */
     private StateActionTransModel mazeTransitionModel(State state, Action action) {
         // Structures contained by the transition model.
@@ -255,37 +253,9 @@ public class MazeProblemMF extends MFLearningProblem implements MazeProblem, Pro
      */
     @Override
     public State readNewState(State state, Action action) {
-        MazeState newPossibleState = null;
-        int x = ((MazeState) state).position.x;
-        int y = ((MazeState) state).position.y;
+        StateActionTransModel transModel = mazeTransitionModel(state, action);
 
-        if (action.equals(MazeAction.DOWN)) {
-            if (x == maze.size - 1) {
-                return state;
-            } else {
-                newPossibleState = new MazeState(x + 1, y);
-            }
-        } else if (action.equals(MazeAction.LEFT)) {
-            if (y == 0) {
-                return state;
-            } else {
-                newPossibleState = new MazeState(x, y - 1);
-            }
-        } else if (action.equals(MazeAction.RIGHT)) {
-            if (y == maze.size - 1) {
-                return state;
-            } else {
-                newPossibleState = new MazeState(x, y + 1);
-            }
-        } else if (action.equals(MazeAction.UP)) {
-            if (x == 0) {
-                return state;
-            } else {
-                newPossibleState = new MazeState(x - 1, y);
-            }
-        }
-
-        return newPossibleState;
+        return transModel.genNextState();
     }
 
     // Utilities
