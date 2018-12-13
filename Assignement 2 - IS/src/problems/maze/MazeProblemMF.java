@@ -99,7 +99,8 @@ public class MazeProblemMF extends MFLearningProblem implements MazeProblem, Pro
         MazeState mazeState = (MazeState) state;
         if (maze.posCats.contains(mazeState.position)) {
             return -100;
-        } else if (maze.posCheese.equals(mazeState.position)) {
+        } 
+        if (maze.posCheese.equals(mazeState.position)) {
             return 100;
         }
         return 0;

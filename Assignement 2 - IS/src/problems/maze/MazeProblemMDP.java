@@ -81,7 +81,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         MazeState mazeState = (MazeState) state;
         ArrayList<Action> possibleActions = new ArrayList<Action>();
         int x = mazeState.X(), y = mazeState.Y();
-        if (maze.cells[x][y] == 0 || maze.cells[x][y] == 1 || maze.cells[x][y] == 2) {
+        if (maze.cells[x][y] == 0 || maze.cells[x][y] == 2 || maze.cells[x][y] == 3) {
 
             if (x - 1 >= 0) {
                 if (maze.cells[x - 1][y] != 1) {
@@ -120,7 +120,8 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         MazeState mazeState = (MazeState) state;
         if (maze.posCats.contains(mazeState.position)) {
             return -100;
-        } else if (maze.posCheese.equals(mazeState.position)) {
+        }
+        if (maze.posCheese.equals(mazeState.position)) {
             return 100;
         }
         return 0;

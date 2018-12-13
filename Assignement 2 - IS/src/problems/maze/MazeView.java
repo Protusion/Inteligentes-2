@@ -257,7 +257,7 @@ public class MazeView extends ProblemView{
 			// Waits 0.05 seconds
 			repaint();
 			try {
-				Thread.sleep(50);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {}
 		}		
 		

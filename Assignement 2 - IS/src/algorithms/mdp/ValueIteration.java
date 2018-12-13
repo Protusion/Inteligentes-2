@@ -2,7 +2,6 @@ package algorithms.mdp;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-
 import learning.*;
 import problems.maze.*;
 
@@ -31,43 +30,70 @@ public class ValueIteration extends LearningAlgorithm {
             System.out.println("The algorithm ValueIteration can not be applied to this problem (model is not visible).");
             System.exit(0);
         }
-        
-        MazeProblemMDP problemMDP = (MazeProblemMDP) this.problem;
-        utilities = new HashMap<State, Double>();
+
+        /* Used variables */
+        MazeProblemMDP problemMDP = (MazeProblemMDP) this.problem; // Instance of the problem casted as MazeProblemMDP to work easier
+        utilities = new HashMap<State, Double>(); // Initialize the HashMap of utilities
+        HashMap<State, Double> currentUtilities; // Used to store the calculated utilities for the current iteration
         double delta = 0;
 
+        /* Iterates through all the posible states,.. */
         for (State state : problemMDP.getAllStates()) {
             if (!problemMDP.isFinal(state)) {
-                utilities.put(state, (double) 0);
+                utilities.put(state, (double) 0); // assigning 0 to all the non final states
             } else {
-                utilities.put(state, problemMDP.getReward(state));
+                utilities.put(state, problemMDP.getReward(state)); // or the corresponding reward -100/100 in case of a final state
             }
         }
 
-        while (!(delta < maxDelta * (1 - problemMDP.gamma) / problem.gamma)) {
-            delta = 0;
-            for (State state : problemMDP.getAllStates()) {
-                if (!problemMDP.isFinal(state)) {
+        /* Iterates until the optimal policy is found */
+        while (!(delta < maxDelta * (1 - problemMDP.gamma) / problem.gamma)) { // Until delta < (1 - gamma)/gamma
+            delta = 0; // Initializes delta
+            currentUtilities = new HashMap<State, Double>();
+            for (State state : problemMDP.getAllStates()) { // For each state among all possible states
+                if (!problemMDP.isFinal(state)) { // If it is not a final state
                     double expectedUtility = Double.NEGATIVE_INFINITY;
-                    Action optimalAction = null;
-                    
+
+                    /* Calculates for each possible action the expected utility */
                     for (Action action : problemMDP.getPossibleActions(state)) {
                         if (problemMDP.getExpectedUtility(state, action, utilities, problemMDP.gamma) > expectedUtility) {
                             expectedUtility = problemMDP.getExpectedUtility(state, action, utilities, problemMDP.gamma);
-                            optimalAction = action;
                         }
                     }
-                    
+
+                    /* Gets the final utility and action for that state in the current iteration */
                     double newUtility = problemMDP.getReward(state) + problemMDP.gamma * expectedUtility;
-                    utilities.put(state, newUtility);
-                    solution.setAction(state, optimalAction);
-                    
-                    if(Math.abs(newUtility - utilities.get(state)) > delta){
+                    currentUtilities.put(state, newUtility);
+
+                    /* Updates the value of delta */
+                    if (Math.abs(newUtility - utilities.get(state)) > delta) {
                         delta = Math.abs(newUtility - utilities.get(state));
                     }
+                } else {
+                    currentUtilities.put(state, problemMDP.getReward(state)); // For final states, the utility is the reward of 
                 }
             }
-        }        
+            /* Updates policies U <-- U' */
+            utilities = currentUtilities;
+        }
+
+        /* Obtains the optimal policy for each state */
+        for (State state : problemMDP.getAllStates()) {
+            if (!problemMDP.isFinal(state)) {
+                Action optimalAction = null;
+                double expectedUtility = Double.NEGATIVE_INFINITY;
+                
+                /* For each possible action, finds the one that leads to a higher utility */
+                for (Action action : problemMDP.getPossibleActions(state)) {
+                    if (problemMDP.getExpectedUtility(state, action, utilities, problemMDP.gamma) > expectedUtility) {
+                        expectedUtility = problemMDP.getExpectedUtility(state, action, utilities, problemMDP.gamma);
+                        optimalAction = action;
+                    }
+                }
+
+                solution.setAction(state, optimalAction);
+            }
+        }
     }
 
     /**
