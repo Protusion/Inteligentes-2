@@ -46,7 +46,7 @@ public class ValueIteration extends LearningAlgorithm {
             }
         }
 
-        /* Iterates until the optimal policy is found */
+        /* Iterates until the delta converges to the set delta */
         while (!(delta < maxDelta * (1 - problemMDP.gamma) / problem.gamma)) { // Until delta < (1 - gamma)/gamma
             delta = 0; // Initializes delta
             currentUtilities = new HashMap<State, Double>();
