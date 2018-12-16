@@ -96,7 +96,7 @@ public class Solver {
 
         // Shows the policy graphically if the problem provides this interface.
         if ((problem instanceof ProblemVisualizable) && sizePx > 300) {
-            ProblemVisualization visualization = new ProblemVisualization(problem, 600);
+            ProblemVisualization visualization = new ProblemVisualization(problem, sizePx);
             visualization.visualizePolicy(policy);
         }
 

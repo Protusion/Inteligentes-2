@@ -47,7 +47,7 @@ public class ValueIteration extends LearningAlgorithm {
         }
 
         /* Iterates until the delta converges to the set delta */
-        while (!(delta < maxDelta * (1 - problemMDP.gamma) / problem.gamma)) { // Until delta < (1 - gamma)/gamma
+        do{
             delta = 0; // Initializes delta
             currentUtilities = new HashMap<State, Double>();
             for (State state : problemMDP.getAllStates()) { // For each state among all possible states
@@ -75,7 +75,7 @@ public class ValueIteration extends LearningAlgorithm {
             }
             /* Updates policies U <-- U' */
             utilities = currentUtilities;
-        }
+        } while (delta >= maxDelta);
 
         /* Obtains the optimal policy for each state */
         for (State state : problemMDP.getAllStates()) {

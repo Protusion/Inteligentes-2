@@ -1,7 +1,6 @@
 package algorithms.qlearning;
 
 import learning.*;
-import utils.Utils;
 
 /**
  * This class must implement the QLearning algorithm to learn the optimal policy.

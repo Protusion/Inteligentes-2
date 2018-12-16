@@ -37,13 +37,12 @@ public class PolicyIteration extends LearningAlgorithm {
         }
 
         // Main loop of the policy iteration.
-        
         /* While the new policy is not the same as the previous policy, iterate */
-        while (!solution.equals(policyAux)) {
-            solution = policyAux; 
-            utilities = policyEvaluation(solution); 
-            policyAux = policyImprovement(utilities); 
-        }
+        do {
+            solution = policyAux;
+            utilities = this.policyEvaluation(solution);
+            policyAux = this.policyImprovement(utilities);
+        } while (!solution.equals(policyAux));
     }
 
     /**
@@ -54,6 +53,7 @@ public class PolicyIteration extends LearningAlgorithm {
         // Initializes utilities. In case of terminal states, the utility corresponds to
         // the reward. In the remaining (most) states, utilities are zero.		
         HashMap<State, Double> utilities = new HashMap<State, Double>();
+        HashMap<State, Double> currentUtilities;
         MDPLearningProblem problemMDP = (MDPLearningProblem) this.problem;
         double delta = 0;
 
@@ -66,26 +66,29 @@ public class PolicyIteration extends LearningAlgorithm {
             }
         }
 
-        
-        while (!(delta < maxDelta * (1 - problemMDP.gamma) / problem.gamma)) {
+        do {
             delta = 0;
+            currentUtilities = new HashMap<State, Double>();
             for (State state : problemMDP.getAllStates()) {
-                if (!problemMDP.isFinal(state)) {
-                    
-                    /* Calculated the expected utilty */
+                if (problemMDP.isFinal(state)) {
+                    currentUtilities.put(state, problemMDP.getReward(state));
+                } else{
+                    /* Calculates the expected utilty for that action */
                     double expectedUtility = problemMDP.getExpectedUtility(state, policy.getAction(state), utilities, problemMDP.gamma);
-                    
-                    /* Obtains the new utility */
+
+                    /* Obtains the new utility and updates it*/
                     double newUtility = problemMDP.getReward(state) + problemMDP.gamma * expectedUtility;
-                    utilities.put(state, newUtility); // Introduces it into the set of new utilities
+                    currentUtilities.put(state, newUtility); // Introduces it into the set of new utilities
 
                     /* Updates delta */
-                    if (Math.abs(newUtility - utilities.get(state)) > delta) {
-                        delta = Math.abs(newUtility - utilities.get(state));
+                    if (Math.abs(currentUtilities.get(state) - utilities.get(state)) > delta) {
+                        delta = Math.abs(currentUtilities.get(state) - utilities.get(state));
                     }
+                    
                 }
             }
-        }
+            utilities = currentUtilities;
+        } while (delta >= maxDelta);
 
         return utilities;
     }
@@ -97,13 +100,12 @@ public class PolicyIteration extends LearningAlgorithm {
         // Creates the new policy
         Policy newPolicy = new Policy();
         MDPLearningProblem problemMDP = (MDPLearningProblem) this.problem;
-
-        double expectedUtility = Double.NEGATIVE_INFINITY;
-
+        
         /* Iterates through each state to find their optimal policies */
         for (State state : problemMDP.getAllStates()) {
             if (!problemMDP.isFinal(state)) {
                 Action optimalAction = null;
+                double expectedUtility = Double.NEGATIVE_INFINITY;
 
                 for (Action action : problemMDP.getPossibleActions(state)) {
                     if (problemMDP.getExpectedUtility(state, action, utilities, problemMDP.gamma) > expectedUtility) {

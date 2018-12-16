@@ -81,33 +81,30 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         MazeState mazeState = (MazeState) state;
         ArrayList<Action> possibleActions = new ArrayList<Action>();
         int x = mazeState.X(), y = mazeState.Y();
-        if (maze.cells[x][y] == 0 || maze.cells[x][y] == 2 || maze.cells[x][y] == 3) {
 
-            if (x - 1 >= 0) {
-                if (maze.cells[x - 1][y] != 1) {
-                    possibleActions.add(MazeAction.LEFT);
-                }
-            }
-            if (x + 1 <= maze.size - 1) {
-                if (maze.cells[x + 1][y] != 1) {
-                    possibleActions.add(MazeAction.RIGHT);
-                }
-            }
-            if (y - 1 >= 0) {
-                if (maze.cells[x][y - 1] != 1) {
-                    possibleActions.add(MazeAction.UP);
-                }
-            }
-            if (y + 1 <= maze.size - 1) {
-                if (maze.cells[x][y + 1] != 1) {
-                    possibleActions.add(MazeAction.DOWN);
-                }
-            }
-            if (maze.cells[x][y] == 2) {
-                possibleActions.add(MazeAction.DIVE);
+        if (x - 1 >= 0) {
+            if (maze.cells[x - 1][y] != 1) {
+                possibleActions.add(MazeAction.LEFT);
             }
         }
-
+        if (x + 1 <= maze.size - 1) {
+            if (maze.cells[x + 1][y] != 1) {
+                possibleActions.add(MazeAction.RIGHT);
+            }
+        }
+        if (y - 1 >= 0) {
+            if (maze.cells[x][y - 1] != 1) {
+                possibleActions.add(MazeAction.UP);
+            }
+        }
+        if (y + 1 <= maze.size - 1) {
+            if (maze.cells[x][y + 1] != 1) {
+                possibleActions.add(MazeAction.DOWN);
+            }
+        }
+        if (maze.cells[x][y] == 2) {
+            possibleActions.add(MazeAction.DIVE);
+        }
         // Returns the actions.
         return possibleActions;
     }
@@ -157,7 +154,7 @@ public class MazeProblemMDP extends MDPLearningProblem implements MazeProblem, P
         ArrayList<State> allStates = new ArrayList<State>();
         for (int i = 0; i < maze.size; i++) {
             for (int j = 0; j < maze.size; j++) {
-                if (maze.cells[i][j] != 1) {
+                if (maze.cells[i][j] != 1 && !this.getPossibleActions(new MazeState(i, j)).isEmpty()) {
                     allStates.add(new MazeState(i, j));
                 }
             }
